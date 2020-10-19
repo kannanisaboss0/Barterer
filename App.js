@@ -2,9 +2,9 @@ import {createSwitchNavigator,createAppContainer} from 'react-navigation'
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import firebase from 'firebase'
-import Signup from './Signup'
-import Signin from './Signin'
-import WelcomeScreen from './Welcome'
+import Signup from './Screens/Signup'
+import Signin from './Screens/Signin'
+import WelcomeScreen from './Screens/Welcome'
 
 export default class App extends React.Component {
   render(){
