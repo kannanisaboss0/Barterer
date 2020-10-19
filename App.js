@@ -1,15 +1,28 @@
-import { StatusBar } from 'expo-status-bar';
+import {createSwitchNavigator,createAppContainer} from 'react-navigation'
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import firebase from 'firebase'
+import Signup from './Signup'
+import Signin from './Signin'
+import WelcomeScreen from './Welcome'
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+export default class App extends React.Component {
+  render(){
+    return (
+      <View >
+        <Container/>
+      </View>
+    );
+  }
+  }
+ const Navigator=createSwitchNavigator({
+  Login:Signin,
+  Logup:Signup,
+  Welcome:WelcomeScreen
+ })
+const Container = createAppContainer(Navigator)
+
+
 
 const styles = StyleSheet.create({
   container: {
