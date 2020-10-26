@@ -8,15 +8,15 @@ export default class WelcomeScreen extends React.Component{
 constructor(){
     super();
     this.state={
-        x:''
+        x:firebase.auth().currentUser.email
     }
 }
     
     render(){
         return(
             <View>
-                <Text>Welcome to Barterer!</Text>
-        <Text>{this.state.x}</Text>
+                <Text>Welcome {this.state.x}!</Text>
+        <Text></Text>
             </View>
         )
     }

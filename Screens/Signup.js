@@ -37,6 +37,7 @@ export default class Signup extends React.Component{
         catch(error){
             switch(error.code){
                 case 'auth/account-already-exists':window.alert("Account already exists, try using the suggested passwords below")
+                break
             }
         }
         }
