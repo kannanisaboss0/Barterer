@@ -11,7 +11,7 @@ import RequestScreen from './Screens/RequestScreen.js'
 import SideBarComponent from './Components/DrawNav.js'
 import SettingScreen from './Screens/Settings.js'
 import { TouchableOpacity,Image } from 'react-native';
-import {Header} from 'react-native-elements'
+
 export default class App extends React.Component {
 
   
