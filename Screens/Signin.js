@@ -1,5 +1,5 @@
 import React from 'react';
-import {  Text, View,TextInput,TouchableOpacity,Alert,Image,Modal,ScrollView } from 'react-native';
+import {  Text, View,TextInput,TouchableOpacity,Alert,Image,Modal,ScrollView, } from 'react-native';
 import db from '../config'
 import firebase from 'firebase'
 
@@ -22,7 +22,9 @@ export default class Signin extends React.Component{
             text:'Password valid',
             passColor:"green",
             confirmSignUpPassword:'',
-            multiline:false
+            multiline:false,
+            isUserNew:false,
+           
 
 
             
@@ -36,7 +38,17 @@ export default class Signin extends React.Component{
         try{
             const Log= await firebase.auth().signInWithEmailAndPassword(emailParameter,passwordParameter)
             if(Log){
-                this.props.navigation.navigate("Welcome")
+                this.setState({
+                    isUserNew:false
+                })
+                this.props.navigation.navigate("Home",{id:this.state.isUserNew})
+                db.collection("logs").add({
+                    "Account":this.state.userName,
+                    "Fullname":this.state.fullName,
+                    "emailID":firebase.auth().currentUser,
+                    "DateofLogin":firebase.firestore.Timestamp.now().toDate()
+
+                })
                
             }
 
@@ -70,7 +82,10 @@ export default class Signin extends React.Component{
             try{
             const Log= await firebase.auth().createUserWithEmailAndPassword(mail,pass)
             if(Log){
-                this.props.navigation.navigate("Welcome",{id:this.state.email})
+                this.setState({
+                    isUserNew:true
+                })
+                this.props.navigation.navigate("Home",{id:this.state.isUserNew})
                 var iD=this.Idgenerator()
                 db.collection("users").add({
                     "Account":this.state.userName,
@@ -120,6 +135,7 @@ export default class Signin extends React.Component{
                  <Text style={{position:"absolute",marginTop:120,fontWeight:"bold",color:"darkgreen"}}>________________________________________________________________________________________________________</Text>
                 <Text style={{color:this.state.passColor,marginTop:260,position:"absolute",marginLeft:0,fontSize:10}}>{this.state.text}</Text>
                  <TextInput
+                 a
                  placeholder="Account Name"
                  placeholderTextColor="darkgreen"
                  style={{borderBottomWidth:2,borderBottomColor:"darkgreen",width:300,height:40}}
@@ -224,7 +240,7 @@ export default class Signin extends React.Component{
             source={require('../assets/CreateAccount.PNG')}
             style={{width:200,height:200,position:"absolute",marginLeft:400,marginTop:75,}}
             />
-            <Text style={{position:"absolute",marginLeft:330,marginTop:285,fontWeight:"bold",color:"darkgreen"}}>Sign-up now and start sharing worldwide!</Text>
+            <Text style={{position:"absolute",marginLeft:330,marginTop:285,fontWeight:"bold",color:"darkgreen"}}>Sign-up now and start trading worldwide!</Text>
            <TouchableOpacity style={{borderTopWidth:3,borderBottomRadius:25,opacity:this.state.opacity,borderColor:"darkgreen",backgroundColor:"darkgreen"}} onPress={()=>{
                    this.VerifyUserforSignUp(this.state.signUpEmail,this.state.signUpPassword,this.state.confirmSignUpPassword)
                }}>
