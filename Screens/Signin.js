@@ -175,6 +175,7 @@ export default class Signin extends React.Component{
            placeholderTextColor="darkgreen"
            style={{borderBottomWidth:2,borderBottomColor:this.state.passColor,width:300,height:40,borderRadius:0,backgroundColor:"white"}}
            value={this.state.signUpPassword}
+           
            onChangeText={(x)=>{
                this.setState({
                    signUpPassword:x

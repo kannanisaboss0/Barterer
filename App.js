@@ -9,8 +9,10 @@ import Signin from './Screens/Signin'
 import HomeScreen from './Screens/Home'
 import RequestScreen from './Screens/RequestScreen.js'
 import SideBarComponent from './Components/DrawNav.js'
-import SettingScreen from './Screens/Settings.js'
+import SettingScreen from './Screens/UserInfromation.js'
 import { TouchableOpacity,Image } from 'react-native';
+import InfoScreen from './Screens/UserInfromation.js';
+import GeneralScreen from './Screens/General'
 
 export default class App extends React.Component {
 
@@ -28,11 +30,11 @@ export default class App extends React.Component {
 
 
  
-
-const TabNavigator=createMaterialTopTabNavigator(
- 
-  {
-  
+const SettingsTabNavigator=createMaterialTopTabNavigator({
+  User:{screen:InfoScreen,navigationOptions:{tabBarLabel:'User Settings'}},
+  GenaralSet:{screen:GeneralScreen,navigationOptions:{tabBarLabel:'General Settings'}}
+})
+const MainTabNavigator=createMaterialTopTabNavigator({
   Home:{screen:HomeScreen,navigationOptions:{tabBarIcon:'Home'}},
   Exchange:{screen:RequestScreen,navigationOptions:{tabBarIcon:'Exchange Items'}}
  },{
@@ -42,8 +44,8 @@ const TabNavigator=createMaterialTopTabNavigator(
  const DrawerNavigator=createDrawerNavigator(
  
   {
-  Main:{screen:TabNavigator,navigationOptions:{drawerIcon:<Image source={require('./assets/Homeicon.PNG')} style={{width:20,height:20}}/>,drawerLabel:'Home'}},
-  Settings:{screen:SettingScreen,navigationOptions:{drawerIcon:<Image source={require('./assets/Settings.PNG')} style={{width:20,height:20}}/>,drawerLabel:'Settings'}}
+  Main:{screen:MainTabNavigator,navigationOptions:{drawerIcon:<Image source={require('./assets/Homeicon.PNG')} style={{width:20,height:20}}/>,drawerLabel:'Home'}},
+  Settings:{screen:SettingsTabNavigator,navigationOptions:{drawerIcon:<Image source={require('./assets/Settings.PNG')} style={{width:20,height:20}}/>,drawerLabel:'Settings'}}
   
 },
 {contentComponent:SideBarComponent,},

@@ -3,12 +3,17 @@ import {  Text, View,TextInput,TouchableOpacity,Alert,Image,Modal,ScrollView, } 
 import db from '../config'
 import firebase from 'firebase'
 
-export default class SettingScreen extends React.Component{
+export default class GeneralScreen extends React.Component{
     constructor(){
         super();
+        this.state={
+            test:firebase.auth().currentUser.email
+        }
+        
     }
     render(){
-        return(<View>
+        return(
+        <View>
             
         </View>)
     }
