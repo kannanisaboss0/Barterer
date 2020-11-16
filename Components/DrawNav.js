@@ -1,4 +1,4 @@
-import {DrawerItems} from 'react-navigation-drawer'
+import {DrawerItems,} from 'react-navigation-drawer'
 import {ListItem} from 'react-native-elements'
 import {TouchableOpacity,View,Text,Image,TextInput,FlatList,ScrollView} from 'react-native'
 import DropDownPicker from 'react-native-dropdown-picker'
@@ -6,6 +6,8 @@ import DropDownPicker from 'react-native-dropdown-picker'
 import firebase from 'firebase'
 import db from '../config.js'
 import *as React from 'react'
+
+
 
 export default class SideBarComponent extends React.Component{
     constructor(){
@@ -105,8 +107,8 @@ export default class SideBarComponent extends React.Component{
             </View>   
                 <View>
             <DrawerItems {...this.props}>
-            
-            </DrawerItems>
+                
+                       </DrawerItems>
             <ScrollView  style={{height:400}}>
             <View >
             <TextInput

@@ -26,7 +26,7 @@ export default class RequestScreen extends React.Component{
   }
     render(){
         return(
-            <View>
+            <View style={{backgroundColor:this.props.navigation.getParam('Colour_Choosing_string')}}>
                
                 <TextInput
                 style={{ width:"75%",height:55,alignSelf:"center",borderColor:"darkgreen",borderWidth:1,marginTop:20,padding:10,}}

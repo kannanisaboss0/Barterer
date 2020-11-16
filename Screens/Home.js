@@ -57,6 +57,7 @@ constructor(){
         return(
             <ScrollView>
             <ListItem
+            style={{backgroundColor:this.props.navigation.getParam('Colour_Choosing_string')}}
             key={i}
             title={item.Name}
             subtitle={item.Description}
@@ -115,7 +116,7 @@ constructor(){
 
     render(){
         return(
-            <View style={{}}>
+            <View style={{backgroundColor:this.props.navigation.getParam('Colour_Choosing_string')}}>
                 <TextInput
                 style={{justifyContent:"center",alignSelf:"center",color:"darkgreen",borderWidth:1,borderColor:"darkgreen",height:30,marginLeft:"-80%",marginTop:100}}
                 placeholder="Search"

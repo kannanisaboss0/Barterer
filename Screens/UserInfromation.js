@@ -19,8 +19,8 @@ export default class InfoScreen extends React.Component{
             id:'',
             idTry:'',
             passwordNotVisible:true,
-            Document:''
-
+            Document:'',
+           
         }
        
     }
@@ -76,16 +76,17 @@ export default class InfoScreen extends React.Component{
         }
     render(){
         return(
-            
-        <View style={{marginLeft:"40%",position:"relative"}}>
-    
-            <Text>{this.state.Document}</Text>
+            <View style={{backgroundColor:this.props.navigation.getParam('Colour_Choosing_string')}}>
+        <View style={{marginLeft:"40%",position:"relative",}}>
+     
             <Image 
             source={require('../assets/UserSettings.PNG')}
             style={{height:200,width:200,marginLeft:50}}
             />
             {this.state.CardVisible===true?
+            
             (
+                
                 <View style={{position:"absolute",marginTop:200,width:500,marginLeft:-100}}>
                 <Card
                          
@@ -95,6 +96,14 @@ export default class InfoScreen extends React.Component{
                 
                
             >
+                <TouchableOpacity onPress={()=>{
+                    this.setState({
+                        CardVisible:false
+                    })
+                     
+                }}>
+                    <Text style={{color:"grey",fontSize:10}}>Cancel</Text>
+                </TouchableOpacity>
                 <Text style={{fontWeight:"bold",color:"darkgreen"}}>Please type in your User Id here:</Text>
                 <TextInput
                 placeholder="User Id"
@@ -109,16 +118,23 @@ export default class InfoScreen extends React.Component{
                 }}
                 />
                 <TouchableOpacity onPress={()=>{
-                    if(this.state.idTry===this.state.id){
-                        this.setState({
-                            passwordNotVisible:false,
-                            CardVisible:false
-                        })
-                        window.alert("Recovery succesful")
+                   
+                   
+                        if(this.state.idTry===this.state.id){
+                            this.setState({
+                                passwordNotVisible:false,
+                                CardVisible:false
+                            })
+                            window.alert("Recovery succesful")
+                        }
+                        if(this.state.id!==this.state.idTry){
+                            window.alert(this.state.idTry+"  is invalid ")
+                        }
+                    
+                    else{
+                        window.alert("Passowrd Verification is blocked, please change it in settings")
                     }
-                    if(this.state.id!==this.state.idTry){
-                        window.alert(this.state.idTry+"  is invalid ")
-                    }
+                   
                     
                 }} style={{width:"50%",borderWidth:1,borderColor:"darkgreen",height:40,borderTopWidth:2,marginTop:10}}>
                     <Text style={{alignSelf:"center",justifyContent:"space-evenly",fontSize:32,color:"darkgreen",marginTop:-5}}>Submit</Text>
@@ -170,9 +186,18 @@ export default class InfoScreen extends React.Component{
             }}
               />
               <TouchableOpacity onPress={()=>{
-                  this.setState({
-                      CardVisible:true
-                  })
+                  var AskPassword=this.props.navigation.getParam('Password_Verification_boolean')
+                  if(AskPassword===true){
+                    this.setState({
+                        CardVisible:true
+                    })
+                  }
+                  else{
+                      this.setState({
+                          passwordNotVisible:false
+                      })
+                  }
+                
               }}>
                   <Text>View</Text>
               </TouchableOpacity>
@@ -197,10 +222,11 @@ export default class InfoScreen extends React.Component{
               />
                 <TouchableOpacity onPress={()=>{
                     this.updateUser()
-                }}  style={{position:"absolute",marginLeft:"50%",marginTop:315,borderWidth:1,borderColor:"darkgreen",width:"37.5%",height:55,backgroundColor:"darkgreen"}}>
-                    <Text style={{fontSize:32,marginLeft:"35%",color:"white",justigyContent:"space-evenly"}}>Save Changes</Text>
+                }}  style={{marginTop:15,borderWidth:1,borderColor:"darkgreen",width:"37.5%",height:55,backgroundColor:"darkgreen",marginLeft:-75,justifyContent:"space-evenly",alignItems:"center"}}>
+                    <Text style={{fontSize:32,color:"white",justifyContent:"space-around",alignSelf:"center"}}>Save Changes</Text>
                 </TouchableOpacity>
               
+        </View>
         </View>)
     }}
 /*

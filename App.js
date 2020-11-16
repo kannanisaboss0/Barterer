@@ -15,9 +15,21 @@ import InfoScreen from './Screens/UserInfromation.js';
 import GeneralScreen from './Screens/General'
 
 export default class App extends React.Component {
-
+  constructor(){
+    super();
+    this.state={
+      
+    }
+   // this.recieveColor=null
+   /// this.recieveDrawerType=null
+  }
   
+  componentDidMount(){
+   // this.recieveColor=this.props.navigation.getParam('Color_Drawer')
+   // this.recieveDrawerType=this.props.navigation.getParam('Drawer_Type')
+  }
   render(){
+
     return (
       <View style={{flex:1}}>
                 <Container/>
@@ -27,15 +39,23 @@ export default class App extends React.Component {
   }
   }
 
-
-
+ 
  
 const SettingsTabNavigator=createMaterialTopTabNavigator({
   User:{screen:InfoScreen,navigationOptions:{tabBarLabel:'User Settings'}},
-  GenaralSet:{screen:GeneralScreen,navigationOptions:{tabBarLabel:'General Settings'}}
-})
+  GeneralSet:{screen:GeneralScreen,navigationOptions:{tabBarLabel:'General Settings'}}
+
+},{
+ 
+  initialRouteName:'GeneralSet',
+  swipeEnabled:true
+  
+}
+
+
+)
 const MainTabNavigator=createMaterialTopTabNavigator({
-  Home:{screen:HomeScreen,navigationOptions:{tabBarIcon:'Home'}},
+  Home:{screen:HomeScreen,navigationOptions:{tabBarIcon:'Home',}},
   Exchange:{screen:RequestScreen,navigationOptions:{tabBarIcon:'Exchange Items'}}
  },{
    swipeEnabled:false
@@ -49,6 +69,7 @@ const MainTabNavigator=createMaterialTopTabNavigator({
   
 },
 {contentComponent:SideBarComponent,},
+
 
 )
 const Navigator=createSwitchNavigator({
