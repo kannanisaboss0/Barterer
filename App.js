@@ -13,6 +13,9 @@ import SettingScreen from './Screens/UserInfromation.js'
 import { TouchableOpacity,Image } from 'react-native';
 import InfoScreen from './Screens/UserInfromation.js';
 import GeneralScreen from './Screens/General'
+import ExchangerDetailsScreen from './Screens/ExchangerDetails'
+import {createStackNavigator} from 'react-navigation-stack'
+import Barters from './Screens/MyBarters';
 
 export default class App extends React.Component {
   constructor(){
@@ -33,17 +36,18 @@ export default class App extends React.Component {
     return (
       <View style={{flex:1}}>
                 <Container/>
+               
         
       </View>
     );
   }
   }
 
- 
+
  
 const SettingsTabNavigator=createMaterialTopTabNavigator({
   User:{screen:InfoScreen,navigationOptions:{tabBarLabel:'User Settings'}},
-  GeneralSet:{screen:GeneralScreen,navigationOptions:{tabBarLabel:'General Settings'}}
+  GeneralSet:{screen:GeneralScreen,navigationOptions:{tabBarLabel:'General Settings',}}
 
 },{
  
@@ -58,28 +62,36 @@ const MainTabNavigator=createMaterialTopTabNavigator({
   Home:{screen:HomeScreen,navigationOptions:{tabBarIcon:'Home',}},
   Exchange:{screen:RequestScreen,navigationOptions:{tabBarIcon:'Exchange Items'}}
  },{
-   swipeEnabled:false
+   swipeEnabled:false,initialRouteName:'Exchange'
  }
  ) 
  const DrawerNavigator=createDrawerNavigator(
  
   {
+   
   Main:{screen:MainTabNavigator,navigationOptions:{drawerIcon:<Image source={require('./assets/Homeicon.PNG')} style={{width:20,height:20}}/>,drawerLabel:'Home'}},
-  Settings:{screen:SettingsTabNavigator,navigationOptions:{drawerIcon:<Image source={require('./assets/Settings.PNG')} style={{width:20,height:20}}/>,drawerLabel:'Settings'}}
-  
+ 
+  Settings:{screen:SettingsTabNavigator,navigationOptions:{drawerIcon:<Image source={require('./assets/Settings.PNG')} style={{width:20,height:20}}/>,drawerLabel:'Settings'}},
+ trry:{screen:Barters,navigationOptions:{drawerIcon:<Image source={require('./assets/CreateAccount.PNG')} style={{width:20,height:20}}/>,drawerLabel:'My Barters',}}
 },
-{contentComponent:SideBarComponent,},
+{contentComponent:SideBarComponent,initalRouteName:'Settings'},
 
 
 )
+const StackNavigator=createStackNavigator({
+  
+  Exchanger:{screen:ExchangerDetailsScreen,navigationOptions:{}},
+  Exchanged:{screen:Barters,navigationOptions:{detachPreviousScreen:true,}}
+},)
 const Navigator=createSwitchNavigator({
   Login:{screen:Signin},
-  MainPage:{screen:DrawerNavigator}
-  
+  MainPage:{screen:DrawerNavigator},
+  StackNav:{screen:StackNavigator}
+ 
 
  
 
- })
+ },{initialRouteName:'Login',})
 
 const Container = createAppContainer(Navigator)
 

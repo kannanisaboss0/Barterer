@@ -4,6 +4,7 @@ import {ListItem} from 'react-native-elements'
 //import *as Progress from 'react-native-progress'
 import db from '../config.js'
 import firebase from 'firebase'
+import { checkPropTypes } from 'prop-types';
 
 export default class HomeScreen extends React.Component{
 constructor(){
@@ -12,13 +13,14 @@ constructor(){
         x:firebase.auth().currentUser.email,
         modalVisible:true,
         Requests:[],
-        nameFilter:''
+        nameFilter:'',
+        NumberofItems:10
        
     }
     this.requestRef=null
 }
     recieveRequests=()=>{
-        this.requestRef=db.collection('requests').onSnapshot((snapshot)=>{
+        this.requestRef=db.collection('requests').where("status","==","Available").onSnapshot((snapshot)=>{
             var RequestList=snapshot.docs.map(document=>
                 document.data()
                 
@@ -36,7 +38,7 @@ constructor(){
          )
     }
     filterbyPrice=()=>{
-        db.collection('requests').where("Name","==",this.state.nameFilter).onSnapshot((snapshot)=>{
+        db.collection('requests').where("Name","==",this.state.nameFilter).limit(this.state.NumberofItems).where("status","==","Available").onSnapshot((snapshot)=>{
             var FilteredRequestedList=snapshot.docs.map((document)=>
                 document.data()
             )
@@ -55,19 +57,28 @@ constructor(){
     }
     renderItem=({item,i})=>{
         return(
-            <ScrollView>
+            <ScrollView style={{height:"80%"}} fadingEdgeLength={1}>
             <ListItem
+            
             style={{backgroundColor:this.props.navigation.getParam('Colour_Choosing_string')}}
             key={i}
             title={item.Name}
-            subtitle={item.Description}
+            
+            subtitle={(<ScrollView style={{width:500,height:40}}>
+                <Text numberOfLines={4}>{item.Description}</Text>
+            </ScrollView>)}
             rightSubtitle={item.Price}
+           
+           leftElement={<TouchableOpacity onPress={()=>{this.props.navigation.navigate('Exchanger',{'Item':item})}} style={{alignSelf:"center",alignItems:"center",borderColor:"darkgreen",borderWidth:1,width:100,hieght:40}}><Text style={{fontWeight:"bold"}}>View</Text></TouchableOpacity>}
+            rightTitle={item.Email}
             
             
             titleStyle={{color:"black",fontWeight:"bold"}}
         rightElement={<Text style={{color:"darkgreen"}}>Date added:{item.Time}</Text>}
             bottomDivider
+            
             />
+            
             </ScrollView>
         )
 
@@ -116,6 +127,7 @@ constructor(){
 
     render(){
         return(
+            <ScrollView style={{height:"80%"}}>
             <View style={{backgroundColor:this.props.navigation.getParam('Colour_Choosing_string')}}>
                 <TextInput
                 style={{justifyContent:"center",alignSelf:"center",color:"darkgreen",borderWidth:1,borderColor:"darkgreen",height:30,marginLeft:"-80%",marginTop:100}}
@@ -134,6 +146,13 @@ constructor(){
                 <FlatList data={this.state.Requests} renderItem={this.renderItem} keyExtractor={(item,index)=>
                      index.toString()
                     } ></FlatList>
+                    <TouchableOpacity onPress={()=>{
+                        this.setState({
+                            NumberofItems:this.state.NumberofItems+10
+                        })
+                    }}>
+                <Text style={{fontSize:32,color:"darkgreen"}}>Add More</Text>
+            </TouchableOpacity>
                     {this.showModal()}
                     <TouchableOpacity style={{marginLeft:23,marginTop:100,borderBottomWidth:3,borderBottomRadius:25,borderBottomColor:"darkgreen",height:30,position:"absolute"}} onPress={()=>{
            this.filterbyPrice()
@@ -155,6 +174,7 @@ constructor(){
        </TouchableOpacity>
        
             </View>
+            </ScrollView>
         )
     }
 }

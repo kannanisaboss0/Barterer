@@ -15,12 +15,15 @@ export default class RequestScreen extends React.Component{
             price:''
         }
     }
+    
   addRequest=()=>{
       db.collection('requests').add({
           "Name":this.state.itemName,
           "Description":this.state.itemDescription,
           "Price":this.state.price,
-          "Time":firebase.firestore.Timestamp.now().toDate().toString().slice(0,21)
+          "Time":firebase.firestore.Timestamp.now().toDate().toString().slice(0,21),
+          "Email":firebase.auth().currentUser.email,
+          "status":"Available"
       })
 
   }
