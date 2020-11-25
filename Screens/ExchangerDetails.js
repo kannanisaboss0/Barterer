@@ -18,7 +18,8 @@ export default class ExchangerDetailsScreen extends React.Component{
             price:'',
             id:'',
             email:firebase.auth().currentUser.email,
-            email2:''
+            email2:'',
+            reasonForRequest:''
             
 
 
@@ -79,6 +80,17 @@ componentDidMount(){
               <ScrollView style={{height:100,borderColor:"darkgreen",borderWidth:1,width:500}}> 
            <Text style={{fontSize:15,color:"darkgreen"}}>{this.state.description}</Text>   
            </ScrollView> 
+           <TextInput
+            style={{ width:"75%",height:200,alignSelf:"center",borderColor:"darkgreen",borderWidth:1,padding:10,}}
+           placeholder="Reason for requesting"
+           value={this.state.reasonForRequest}
+           onChangeText={(x)=>{
+               this.setState({
+                reasonForRequest:x
+               })
+            
+           }}
+           />
            <TouchableOpacity onPress={()=>{
                db.collection('Barters').add({
                    "id":Math.random().toString(5),
@@ -93,30 +105,26 @@ componentDidMount(){
                db.collection('requests').doc(this.state.id).update({
                 "status":"Not Available"
                })
+               var email=this.props.navigation.getParam('Item')["Email"]
+               var name=this.props.navigation.getParam('Item')["Name"]
+               db.collection('Notifications').add({
+                   "RequesterEmail":firebase.auth().currentUser.email,
+                   "ExchangerEmail":email,
+                   "Date":firebase.firestore.Timestamp.now().toDate(),
+                   "Status":"undecided",
+                   "id":Math.random().toString(5),
+                   "readStatus":"unread",
+                   "ReasonForRequest":this.state.reasonForRequest,
+                   "ItemName":name
+
+               })
                this.props.navigation.navigate('Exchanged')
            }}  style={{alignItems:"center",alignSelf:"center",width:"25%",borderWidth:2,borderColor:"darkgreen",height:40,justifyContent:"space-between"}}>
             <Text style={{alignSelf:"center",fontSize:32,justifyContent:"space-around",marginTop:-5,color:"darkgreen"}}>
                 Exchange
             </Text>
             </TouchableOpacity >            
-            <TouchableOpacity onPress={()=>{
-                 db.collection('Barters').add({
-                    "id":Math.random().toString(5),
-                    "name":this.state.name,
-                    "date":firebase.firestore.Timestamp.now().toDate(),
-                    "item":this.state.object,
-                   "status":"Available",
-                    "contact":this.state.contact,
-                    "email":this.state.email
- 
-                })
-                this.props.navigation.navigate('Exchanged',{'Id':this.state.id})
-            }}  style={{alignItems:"center",alignSelf:"center",width:"25%",borderWidth:2,borderColor:"darkgreen",height:40,justifyContent:"space-between"}}>
-            <Text style={{alignSelf:"center",fontSize:32,justifyContent:"space-around",marginTop:-5,color:"darkgreen"}}>
-                Add to Barters
-            </Text>
-
-           </TouchableOpacity>
+           
              
             </Card>
                 ):

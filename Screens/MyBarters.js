@@ -50,7 +50,7 @@ export default class Barters extends React.Component{
                 snapshot.forEach((document)=>{
                     var doc=document.data()
                     this.setState({
-                        i:doc.Name
+                        i:doc.id
                     })
                 })
             })
@@ -74,12 +74,23 @@ export default class Barters extends React.Component{
     render(){
         return(
             <View>
-                <FlatList data={this.state.AllBarters} renderItem={this.renderItem} keyExtractor={(item,index)=>{
-                    index.toString()
-                }}>
+            {this.state.AllBarters.length===0?(
+                <View>
+                <Text style={{color:"grey",alignSelf:"center",fontSize:25}}>No Barters Requested Currently,</Text>
+                <Text onPress={()=>{this.props.navigation.navigate('Main')}} style={{color:"grey",alignSelf:"center"}}>Click here to seach for Barters</Text>
+                </View>
+            ):
+            <FlatList
+            data={this.state.AllBarters}
+            renderItem={this.renderItem}
+            keyExtractor={(item,index)=>{
+                index.toString()
+            }}
+            ></FlatList>
 
-                </FlatList>
-            </View>
+            }
+            
+        </View>
         )
     }
 }

@@ -16,6 +16,8 @@ import GeneralScreen from './Screens/General'
 import ExchangerDetailsScreen from './Screens/ExchangerDetails'
 import {createStackNavigator} from 'react-navigation-stack'
 import Barters from './Screens/MyBarters';
+import Notifications from './Screens/Notifications';
+import Offers from './Screens/Offers';
 
 export default class App extends React.Component {
   constructor(){
@@ -72,7 +74,9 @@ const MainTabNavigator=createMaterialTopTabNavigator({
   Main:{screen:MainTabNavigator,navigationOptions:{drawerIcon:<Image source={require('./assets/Homeicon.PNG')} style={{width:20,height:20}}/>,drawerLabel:'Home'}},
  
   Settings:{screen:SettingsTabNavigator,navigationOptions:{drawerIcon:<Image source={require('./assets/Settings.PNG')} style={{width:20,height:20}}/>,drawerLabel:'Settings'}},
- trry:{screen:Barters,navigationOptions:{drawerIcon:<Image source={require('./assets/CreateAccount.PNG')} style={{width:20,height:20}}/>,drawerLabel:'My Barters',}}
+ Barters:{screen:Barters,navigationOptions:{drawerIcon:<Image source={require('./assets/CreateAccount.PNG')} style={{width:20,height:20}}/>,drawerLabel:'My Barters',}},
+ Notifications:{screen:Notifications,navigationOptions:{drawerLabel:'Notifications'}},
+ Offers:{screen:Offers}
 },
 {contentComponent:SideBarComponent,initalRouteName:'Settings'},
 
