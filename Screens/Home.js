@@ -1,10 +1,9 @@
 import React from 'react';
-import { StyleSheet, Text, View,TextInput,TouchableOpacity,FlatList,Modal,ScrollView } from 'react-native';
-import {ListItem} from 'react-native-elements'
+import { StyleSheet, Text, View,TextInput,TouchableOpacity,FlatList,Modal,ScrollView,Image } from 'react-native';
+import {ListItem,Header,Badge} from 'react-native-elements'
 //import *as Progress from 'react-native-progress'
 import db from '../config.js'
 import firebase from 'firebase'
-import { checkPropTypes } from 'prop-types';
 
 export default class HomeScreen extends React.Component{
 constructor(){
@@ -14,13 +13,15 @@ constructor(){
         modalVisible:true,
         Requests:[],
         nameFilter:'',
-        NumberofItems:10
+        NumberofItems:10,
+        AllBarters:'',
+        AllNotifiactions:''
        
     }
     this.requestRef=null
 }
     recieveRequests=()=>{
-        this.requestRef=db.collection('requests').where("status","==","Available").onSnapshot((snapshot)=>{
+        this.requestRef=db.collection('requests').onSnapshot((snapshot)=>{
             var RequestList=snapshot.docs.map(document=>
                 document.data()
                 
@@ -38,7 +39,7 @@ constructor(){
          )
     }
     filterbyPrice=()=>{
-        db.collection('requests').where("Name","==",this.state.nameFilter).limit(this.state.NumberofItems).where("status","==","Available").onSnapshot((snapshot)=>{
+        db.collection('requests').where("Name","==",this.state.nameFilter).limit(10).onSnapshot((snapshot)=>{
             var FilteredRequestedList=snapshot.docs.map((document)=>
                 document.data()
             )
@@ -47,8 +48,28 @@ constructor(){
             })
         })
     }
+    recieveMessages=()=>{
+        db.collection('Barters').where("email","==",this.state.x).get().then((snapshot)=>{
+         var AllBarters=   snapshot.docs.map((document)=>{
+            document.data()
+            })
+            this.setState({
+                AllBarters:AllBarters.length
+            })
+        })
+        db.collection('Notifications').where("ExchangeEmail","==",this.state.x).where("status","==","unread").get().then((snapshot)=>{
+            var AllNotifications=snapshot.docs.map((document)=>{
+                document.data()
+            })
+            this.setState({
+                AllNotifiactions:AllNotifications.length
+            })
+        })
+       
+    }
     componentDidMount(){
         this.recieveRequests()
+        this.recieveMessages()
         
         
     }
@@ -57,7 +78,8 @@ constructor(){
     }
     renderItem=({item,i})=>{
         return(
-            <ScrollView style={{height:"80%"}} fadingEdgeLength={1}>
+            <ScrollView style={{height:"80%",marginTop:25}} fadingEdgeLength={1}>
+               
             <ListItem
             
             style={{backgroundColor:this.props.navigation.getParam('Colour_Choosing_string')}}
@@ -127,7 +149,29 @@ constructor(){
 
     render(){
         return(
+           <View>
+               {this.state.Requests.length===0?
+               <View>
+                   <Image
+                   style={{alignSelf:"center",height:200,width:200}}
+                   source={require('../assets/Nothing.PNG')}
+                   />
+               <Text style={{fontSize:26,color:"grey",alignSelf:"center"}}>No New Items</Text>
+            <Text style={{color:"grey",alignSelf:"center"}} onPress={()=>{
+                this.recieveRequests()
+            }}>Click here to try again</Text>
+            </View>:
             <ScrollView style={{height:"80%"}}>
+                 <Header   leftContainerStyle={{}}  collapsable={true}  leftComponent={<View style={{}}>
+                 <Image style={{width:20,height:20,borderRadius:100,borderWidth:2}} source={require('../assets/CreateAccount.PNG')}></Image><Badge onPress={()=>{
+                        this.props.navigation.navigate('Barters')}} status="primary" value={this.state.AllBarters} />
+                     {this.state.AllNotifiactions>0?
+                     <View> <Image style={{width:20,height:20,borderRadius:100,borderWidth:2}} source={require('../assets/Bellicon.PNG')}></Image><Badge onPress={()=>{
+                        this.props.navigation.navigate('Notifications')}} status="error" value={this.state.AllNotifiactions} /></View>:
+                     null}
+                     </View>}
+                        containerStyle={{backgroundColor:'white',height:100}}
+                />
             <View style={{backgroundColor:this.props.navigation.getParam('Colour_Choosing_string')}}>
                 <TextInput
                 style={{justifyContent:"center",alignSelf:"center",color:"darkgreen",borderWidth:1,borderColor:"darkgreen",height:30,marginLeft:"-80%",marginTop:100}}
@@ -175,6 +219,9 @@ constructor(){
        
             </View>
             </ScrollView>
+            }
+            
+            </View>
         )
     }
 }

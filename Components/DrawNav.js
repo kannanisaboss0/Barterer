@@ -1,5 +1,5 @@
 import {DrawerItems,} from 'react-navigation-drawer'
-import {ListItem} from 'react-native-elements'
+import {Badge, ListItem,} from 'react-native-elements'
 import {TouchableOpacity,View,Text,Image,TextInput,FlatList,ScrollView} from 'react-native'
 import DropDownPicker from 'react-native-dropdown-picker'
 
@@ -106,7 +106,10 @@ export default class SideBarComponent extends React.Component{
                 <Text>Id:{this.state.id}</Text>
             </View>   
                 <View>
-            <DrawerItems {...this.props}>
+                
+            <DrawerItems {...this.props}
+            
+            >
                 
                        </DrawerItems>
             <ScrollView  style={{height:400}}>
@@ -127,6 +130,7 @@ export default class SideBarComponent extends React.Component{
                 {label:'Account',value:'Account'},
                 {label:'Email',value:'Email'},
                 {label:'Contact Number',value:'Contact'}
+                
             ]}
             onChangeItem={(item)=>{
                 this.setState({
@@ -167,7 +171,7 @@ export default class SideBarComponent extends React.Component{
            
             </View>
             </ScrollView>
-            <View style={{marginTop:300,fontSize:35,fontWeight:"bold",borderWidth:3,borderRadius:25,height:50,backgroundColor:"darkgreen"}} >
+            <View style={{marginTop:120,fontSize:35,fontWeight:"bold",borderWidth:3,borderRadius:25,height:50,backgroundColor:"darkgreen"}} >
             <TouchableOpacity style={{width:320}} onPress={()=>{
                 window.alert("Signing out")
                 firebase.auth().signOut()

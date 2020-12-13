@@ -3,6 +3,7 @@ import {createMaterialTopTabNavigator,} from 'react-navigation-tabs'
 import {createDrawerNavigator} from 'react-navigation-drawer'
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import {Badge} from 'react-native-elements'
 import firebase from 'firebase'
 import Signup from './Screens/Signup'
 import Signin from './Screens/Signin'
@@ -18,21 +19,20 @@ import {createStackNavigator} from 'react-navigation-stack'
 import Barters from './Screens/MyBarters';
 import Notifications from './Screens/Notifications';
 import Offers from './Screens/Offers';
+import db from './config'
+
+
 
 export default class App extends React.Component {
   constructor(){
     super();
     this.state={
-      
+     
     }
    // this.recieveColor=null
    /// this.recieveDrawerType=null
   }
   
-  componentDidMount(){
-   // this.recieveColor=this.props.navigation.getParam('Color_Drawer')
-   // this.recieveDrawerType=this.props.navigation.getParam('Drawer_Type')
-  }
   render(){
 
     return (
@@ -73,10 +73,14 @@ const MainTabNavigator=createMaterialTopTabNavigator({
    
   Main:{screen:MainTabNavigator,navigationOptions:{drawerIcon:<Image source={require('./assets/Homeicon.PNG')} style={{width:20,height:20}}/>,drawerLabel:'Home'}},
  
-  Settings:{screen:SettingsTabNavigator,navigationOptions:{drawerIcon:<Image source={require('./assets/Settings.PNG')} style={{width:20,height:20}}/>,drawerLabel:'Settings'}},
- Barters:{screen:Barters,navigationOptions:{drawerIcon:<Image source={require('./assets/CreateAccount.PNG')} style={{width:20,height:20}}/>,drawerLabel:'My Barters',}},
- Notifications:{screen:Notifications,navigationOptions:{drawerLabel:'Notifications'}},
- Offers:{screen:Offers}
+  Settings:{screen:SettingsTabNavigator,navigationOptions:{drawerIcon:<Image source={require('./assets/Settings.PNG')} style={{width:20,height:20}}/>,drawerLabel:'Settings',title:'Hi'}},
+ Barters:{screen:Barters,navigationOptions:{drawerIcon:(<View><Image source={require('./assets/CreateAccount.PNG')} style={{width:20,height:20}}/>
+ 
+</View>
+ ),drawerLabel:'My Barters',}},
+ Notifications:{screen:Notifications,navigationOptions:{drawerLabel:'Notifications',drawerIcon:<Image style={{width:40,height:40}} source={require('./assets/Bellicon.PNG')}/>}},
+ Offers:{screen:Offers,navigationOptions:{drawerIcon:<Image style={{width:40,height:40}} source={require('./assets/Offericon.PNG')}/>,drawerLabel:'Offers'}}
+ 
 },
 {contentComponent:SideBarComponent,initalRouteName:'Settings'},
 

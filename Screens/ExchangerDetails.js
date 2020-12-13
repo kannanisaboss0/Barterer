@@ -57,7 +57,11 @@ getExchangerDetails=()=>{
         })
     })
 }
-
+Idgenerator=()=>{
+    return(
+        Math.random().toString(36).substring(1,36)
+    )
+}
 
 componentDidMount(){
     this.getExchangerDetails()
@@ -81,7 +85,8 @@ componentDidMount(){
            <Text style={{fontSize:15,color:"darkgreen"}}>{this.state.description}</Text>   
            </ScrollView> 
            <TextInput
-            style={{ width:"75%",height:200,alignSelf:"center",borderColor:"darkgreen",borderWidth:1,padding:10,}}
+            style={{ width:"75%",height:50,alignSelf:"center",borderColor:"darkgreen",borderWidth:1,padding:10,}}
+            numberOfLines={5}
            placeholder="Reason for requesting"
            value={this.state.reasonForRequest}
            onChangeText={(x)=>{
@@ -93,14 +98,16 @@ componentDidMount(){
            />
            <TouchableOpacity onPress={()=>{
                db.collection('Barters').add({
-                   "id":Math.random().toString(5),
                    "name":this.state.name,
                    "date":firebase.firestore.Timestamp.now().toDate(),
                    "item":this.state.object,
                    "status":"Not Available",
                    "contact":this.state.contact,
                    "email":this.state.email,
-
+                   "UserStatus":"Undecided",
+                   "ident":this.Idgenerator()
+                   
+                   
                })
                db.collection('requests').doc(this.state.id).update({
                 "status":"Not Available"
@@ -109,13 +116,16 @@ componentDidMount(){
                var name=this.props.navigation.getParam('Item')["Name"]
                db.collection('Notifications').add({
                    "RequesterEmail":firebase.auth().currentUser.email,
-                   "ExchangerEmail":email,
-                   "Date":firebase.firestore.Timestamp.now().toDate(),
-                   "Status":"undecided",
-                   "id":Math.random().toString(5),
-                   "readStatus":"unread",
-                   "ReasonForRequest":this.state.reasonForRequest,
-                   "ItemName":name
+                   "ExchangeEmail":email,
+                   "Date":firebase.firestore.Timestamp.now().toDate().toString().slice(0,21),
+                   "Item":this.state.object,
+                   "Reason":this.state.reasonForRequest,
+                   "Contact":this.state.contact,
+                   "ident":this.Idgenerator(),
+                   "status":"unread"
+                   
+                   
+
 
                })
                this.props.navigation.navigate('Exchanged')

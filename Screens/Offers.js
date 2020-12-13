@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View,TextInput,TouchableOpacity,FlatList,Modal,ScrollView } from 'react-native';
+import { StyleSheet, Text, View,TextInput,TouchableOpacity,FlatList,Modal,ScrollView,Image } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker'
-import {ListItem,Card} from 'react-native-elements'
+import {ListItem,Card,Badge} from 'react-native-elements'
 //import *as Progress from 'react-native-progress'
 import db from '../config.js'
 import firebase from 'firebase'
@@ -39,17 +39,21 @@ export default class Offers extends React.Component{
             <ListItem
             
             key={i}
-        title={item.Declined==="Decline"?(<Text>{item.RequesterEmail} +has declined</Text>):<Text>{item.RequesterEmail } + has accetped</Text>}
-            subtitle={item.ReasonForRequest}
             
-
-            rightAvatar={<TouchableOpacity onPress={()=>{
-                db.collection("Desicions").add({
-                    "RequesterEmail":item.RequesterEmail,
-                    "ExchangerEmail":firebase.auth().currentUser.email,
-                    "Declined":this.state.choice
-                })
-            }}><Text>Send</Text></TouchableOpacity>}
+        title={item.Declined==="Decline"?(<Text>{item.ExchangerEmail} +has declined</Text>):<Text>{item.ExchangerEmail } + has accetped</Text>}
+            subtitle={item.Statement?
+                <Text>{item.Statement}</Text>:
+        <Text style={{fontWeight:"bold",color:"darkgreen"}}>No Statement</Text>
+        
+        }
+            
+            rightElement={<Badge
+            value={item}
+            status="primary"
+            badgeStyle={{width:10,height:10,borderRadius:100}}
+            
+            />}
+          
             bottomDivider
             />        )
         
@@ -58,7 +62,13 @@ export default class Offers extends React.Component{
         return(
             <View>
                 {this.state.AllNotifications.length===0?(
+                    <View>
+                        <Image
+                    style={{alignSelf:"center",height:200,width:200}}
+                    source={require('../assets/Nothing.PNG')}
+                    />
                     <Text style={{color:"grey",alignSelf:"center",fontSize:32}}>No New Notifications</Text>
+                    </View>
                 ):
                 <FlatList
                 
