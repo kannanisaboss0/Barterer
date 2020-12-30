@@ -19,6 +19,7 @@ import {createStackNavigator} from 'react-navigation-stack'
 import Barters from './Screens/MyBarters';
 import Notifications from './Screens/Notifications';
 import Offers from './Screens/Offers';
+import FriendScreen from './Screens/FriendScreen'
 import db from './config'
 
 
@@ -79,7 +80,8 @@ const MainTabNavigator=createMaterialTopTabNavigator({
 </View>
  ),drawerLabel:'My Barters',}},
  Notifications:{screen:Notifications,navigationOptions:{drawerLabel:'Notifications',drawerIcon:<Image style={{width:40,height:40}} source={require('./assets/Bellicon.PNG')}/>}},
- Offers:{screen:Offers,navigationOptions:{drawerIcon:<Image style={{width:40,height:40}} source={require('./assets/Offericon.PNG')}/>,drawerLabel:'Offers'}}
+ Offers:{screen:Offers,navigationOptions:{drawerIcon:<Image style={{width:40,height:40}} source={require('./assets/Offericon.PNG')}/>,drawerLabel:'Offers'}},
+ Friends:{screen:FriendScreen,navigationOptions:{drawerLabel:'Friends',drawerIcon:<Image style={{width:40,height:40}} source={require('./assets/FriendIcon.PNG')}/>}}
  
 },
 {contentComponent:SideBarComponent,initalRouteName:'Settings'},

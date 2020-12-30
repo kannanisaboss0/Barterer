@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View,TextInput,TouchableOpacity,FlatList,Modal,ScrollView } from 'react-native';
-import {ListItem,Card} from 'react-native-elements'
+import { StyleSheet, Text, View,TextInput,TouchableOpacity,FlatList,Modal,ScrollView, } from 'react-native';
+import {ListItem,Card,} from 'react-native-elements'
 //import *as Progress from 'react-native-progress'
 import db from '../config.js'
 import firebase from 'firebase'
@@ -11,7 +11,7 @@ export default class ExchangerDetailsScreen extends React.Component{
         this.state={
             contact:'',
             address:'',
-            name:'',
+            name:'User',
             date:'',
             description:'',
             object:'',
@@ -65,6 +65,10 @@ Idgenerator=()=>{
 
 componentDidMount(){
     this.getExchangerDetails()
+    if(this.state.reasonForRequest.length>=200){
+        window.alert("Word limit exceeded")
+        
+    }
 }
 
     render(){
@@ -78,6 +82,17 @@ componentDidMount(){
           >
               <Text onPress={()=>{this.props.navigation.navigate('Main')}} style={{color:"grey"}}>Return to main menu</Text>
               <Text style={{fontSize:17,color:"darkgreen"}}>By:{this.state.name}</Text>
+
+              <Text style={{color:"darkgreen",}} onPress={()=>{
+                    this.props.navigation.navigate('Friends')
+                    db.collection("Friends").doc(this.state.name).set({
+                    "FriendsEmail":this.state.name,
+                    "YourEmail":this.state.email,
+                   })
+             
+                 
+              }} >Add to friends</Text>
+
               <Text style={{fontSize:17,color:"darkgreen"}}>Contact:{this.state.contact}</Text>
               <Text style={{fontSize:17,color:"darkgreen"}}>Address:{this.state.address}</Text>
               <Text style={{fontSize:17,color:"darkgreen"}}>Date Added:{this.state.date}</Text>   
@@ -87,6 +102,9 @@ componentDidMount(){
            <TextInput
             style={{ width:"75%",height:50,alignSelf:"center",borderColor:"darkgreen",borderWidth:1,padding:10,}}
             numberOfLines={5}
+            maxLength={200}
+            clearButtonMode={"while-editing"}
+            multiline={true}
            placeholder="Reason for requesting"
            value={this.state.reasonForRequest}
            onChangeText={(x)=>{
@@ -96,6 +114,7 @@ componentDidMount(){
             
            }}
            />
+           <Text style={{color:"darkgreen",fontWeight:"bold"}}>Words written:{this.state.reasonForRequest.length}/200</Text>
            <TouchableOpacity onPress={()=>{
                db.collection('Barters').add({
                    "name":this.state.name,

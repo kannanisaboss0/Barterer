@@ -1,30 +1,37 @@
 import React from 'react';
-import { StyleSheet, Text, View,TextInput,TouchableOpacity,FlatList,Modal,ScrollView,Image } from 'react-native';
+import { StyleSheet, Text, View,TextInput,TouchableOpacity,FlatList,Modal,ScrollView,Image,Dimensions,Animated } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker'
-import {ListItem,Card} from 'react-native-elements'
+import {ListItem,Card,} from 'react-native-elements'
+import {SwipeListView} from 'react-native-swipe-list-view'
 //import *as Progress from 'react-native-progress'
 import db from '../config.js'
 import firebase from 'firebase'
 
+
 export default class Notifications extends React.Component{
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state={
             AllNotifications:[],
             email:firebase.auth().currentUser.email,
             choice:'Accept',
             id:'h',
-            RequesterEmail:'',
+            RequesterEmail:'User',
             cardVisible:false,
             statement:'',
-            notid:'vv'
+            updatereadDocumentId:'',
+            pl:'',
+            readDocumentId:'fd',
+            notid:'vv',
+            friendStatus:'',
+       
 
         }
         this.requestNotifications=null
     }
    
     getAllNotifications=()=>{
-        db.collection("Notifications").where("ExchangeEmail","==",this.state.email).onSnapshot((snapshot)=>{
+        db.collection("Notifications").where("ExchangeEmail","==",this.state.email).where("status","==","unread").onSnapshot((snapshot)=>{
             var AllNotifications=snapshot.docs.map((document)=>
                 document.data()
                 
@@ -55,11 +62,10 @@ export default class Notifications extends React.Component{
     componentDidMount(){
         this.requestNotifications=this.getAllNotifications()
     }
-    componentWillMount(){
-        this.requestNotifications=null
-    }
+    
     renderItem=({item,i})=>{
-        return(
+        (
+            <View>
             <ListItem
             
             key={i}
@@ -134,10 +140,34 @@ export default class Notifications extends React.Component{
            
             bottomDivider 
     />
-        
+        </View>
         )
         
     }
+    renderHiddenItem=({item,i})=>{
+        return(
+            <Animated.View style={{alignSelf:"center",width:500}}>
+               
+                
+                <TouchableOpacity onPress={()=>{
+                    db.collection("Friends").doc(item.RequesterEmail).set({
+                        "FriendsEmail":item.RequesterEmail,
+                        "YourEmail":this.state.email,
+                        
+
+                    })
+                    this.props.navigation.navigate('Friends')
+                     
+                   
+                   
+                }}
+                >
+                    <Text style={{marginTop:20,fontSize:32,color:"darkgreen"}}>Add  {item.RequesterEmail} to "Friends"</Text>
+                </TouchableOpacity>
+            </Animated.View>
+        )
+    }
+
     render(){
         return(
 
@@ -153,14 +183,25 @@ export default class Notifications extends React.Component{
                 ):
                 <View>
                    
-                <FlatList
+                <SwipeListView
                 
+                
+            
+                disableRightSwipe={true}
+                friction={2}
+               
+                
+                  
+                leftOpenValue={-1*Dimensions.get("window").width}
+                rightOpenValue={Dimensions.get("window").width-100}
                 data={this.state.AllNotifications}
+                renderHiddenItem={this.renderHiddenItem}
+                
                 renderItem={this.renderItem}
                 keyExtractor={(item,index)=>{
                     index.toString()
                 }}
-                ></FlatList>
+                ></SwipeListView>
                  {this.state.cardVisible===true?
                     (<View style={{position:"absolute",alignSelf:"center",width:1000,marginTop:200}}>
                        
@@ -193,7 +234,7 @@ export default class Notifications extends React.Component{
                         </Card>
                         </View>):null}
     </View>                }
-                        <Text>{this.state.notid}</Text>
+                        
                 
             </View>
         )

@@ -1,6 +1,6 @@
 import {DrawerItems,} from 'react-navigation-drawer'
-import {Badge, ListItem,} from 'react-native-elements'
-import {TouchableOpacity,View,Text,Image,TextInput,FlatList,ScrollView} from 'react-native'
+import {Badge, ListItem} from 'react-native-elements'
+import {TouchableOpacity,View,Text,Image,TextInput,FlatList,ScrollView,} from 'react-native'
 import DropDownPicker from 'react-native-dropdown-picker'
 
 import firebase from 'firebase'
@@ -84,6 +84,17 @@ export default class SideBarComponent extends React.Component{
            rightSubtitle={item.contact}
            rightTitle={item.Fullname}
            rightTitleStyle={{color:"black"}}
+           leftAvatar={
+               <TouchableOpacity onPress={()=>{
+                db.collection("Friends").doc(item.emailID).set({
+                    "FriendsEmail":item.emailID,
+                    "YourEmail":this.state.h,
+                })
+                this.props.navigation.navigate('Friends')
+               }} style={{borderWidth:1,borderColor:"darkgreen",alignItems:"center"}}>
+                   <Text style={{alignSelf:"center",color:"darkgreen"}}>Add</Text>
+               </TouchableOpacity>
+           }
            bottomDivider
             
            

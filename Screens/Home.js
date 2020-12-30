@@ -4,6 +4,7 @@ import {ListItem,Header,Badge} from 'react-native-elements'
 //import *as Progress from 'react-native-progress'
 import db from '../config.js'
 import firebase from 'firebase'
+import *as ImagePicker from 'expo-image-picker'
 
 export default class HomeScreen extends React.Component{
 constructor(){
@@ -15,10 +16,12 @@ constructor(){
         nameFilter:'',
         NumberofItems:10,
         AllBarters:'',
-        AllNotifiactions:''
+        AllNotifiactions:'',
+        AllOffers:''
        
     }
     this.requestRef=null
+     
 }
     recieveRequests=()=>{
         this.requestRef=db.collection('requests').onSnapshot((snapshot)=>{
@@ -65,11 +68,28 @@ constructor(){
                 AllNotifiactions:AllNotifications.length
             })
         })
+        db.collection('Desicions').where("RequesterEmail","==",this.state.x).get().then((snapshot)=>{
+            var AllOffers=snapshot.docs.map((document)=>{
+                document.data()
+            })
+            this.setState({
+                AllOffers:AllOffers.length
+            })
+        })
        
+    }
+    launchLibrary=async()=>{
+        const {canceled,url}=await ImagePicker.launchImageLibraryAsync({
+            mediaTypes:ImagePicker.MediaTypeOptions.All,
+            allowsEditing:true,
+            aspect:[4,3],
+            quality:1
+        })
     }
     componentDidMount(){
         this.recieveRequests()
         this.recieveMessages()
+    
         
         
     }
@@ -86,7 +106,8 @@ constructor(){
             key={i}
             title={item.Name}
             
-            subtitle={(<ScrollView style={{width:500,height:40}}>
+            subtitle={(
+            <ScrollView style={{width:500,height:40}}>
                 <Text numberOfLines={4}>{item.Description}</Text>
             </ScrollView>)}
             rightSubtitle={item.Price}
@@ -150,8 +171,22 @@ constructor(){
     render(){
         return(
            <View>
+              
                {this.state.Requests.length===0?
                <View>
+                   <Header   leftContainerStyle={{}}  collapsable={true}  leftComponent={<View style={{}}>
+                 <Image style={{width:20,height:20,borderRadius:100,borderWidth:2}} source={require('../assets/CreateAccount.PNG')}></Image>
+                 <Badge onPress={()=>{
+                        this.props.navigation.navigate('Barters')}} status="primary" value={this.state.AllBarters} />
+                     {this.state.AllNotifiactions>0?
+                     <View>
+                          <Image style={{width:20,height:20,borderRadius:100,borderWidth:2}} source={require('../assets/Bellicon.PNG')}></Image>
+                          <Badge onPress={()=>{
+                        this.props.navigation.navigate('Notifications')}} status="error" value={this.state.AllNotifiactions} /></View>:
+                     null}
+                     </View>}
+                        containerStyle={{backgroundColor:'white',height:100}}
+                />
                    <Image
                    style={{alignSelf:"center",height:200,width:200}}
                    source={require('../assets/Nothing.PNG')}
@@ -162,14 +197,31 @@ constructor(){
             }}>Click here to try again</Text>
             </View>:
             <ScrollView style={{height:"80%"}}>
-                 <Header   leftContainerStyle={{}}  collapsable={true}  leftComponent={<View style={{}}>
-                 <Image style={{width:20,height:20,borderRadius:100,borderWidth:2}} source={require('../assets/CreateAccount.PNG')}></Image><Badge onPress={()=>{
+                <Header   leftContainerStyle={{}}  collapsable={true}  leftComponent={<View style={{}}>
+                <Image style={{width:20,height:20,borderRadius:100,borderWidth:2,borderColor:"lightblue"}} source={require('../assets/CreateAccount.PNG')}></Image>
+                <Badge onPress={()=>{
                         this.props.navigation.navigate('Barters')}} status="primary" value={this.state.AllBarters} />
+                <Image style={{width:20,height:20,borderWidth:2,borderRadius:100,borderColor:"green"}} source={require('../assets/Offericon.PNG')}></Image> 
+                <Badge onPress={()=>{
+                    this.props.navigation.navigate('Offers')}} status="success" value={this.state.AllOffers}  />
                      {this.state.AllNotifiactions>0?
-                     <View> <Image style={{width:20,height:20,borderRadius:100,borderWidth:2}} source={require('../assets/Bellicon.PNG')}></Image><Badge onPress={()=>{
-                        this.props.navigation.navigate('Notifications')}} status="error" value={this.state.AllNotifiactions} /></View>:
-                     null}
-                     </View>}
+                <View>
+                <Image style={{width:20,height:20,borderRadius:100,borderWidth:2,borderColor:"red"}} source={require('../assets/Bellicon.PNG')}></Image>
+                <Badge onPress={()=>{
+                        this.props.navigation.navigate('Notifications')}} status="error" value={this.state.AllNotifiactions} />
+                
+                </View>:
+                     null
+                     }
+               
+                  
+                
+                
+          
+                </View>
+                
+                
+            }
                         containerStyle={{backgroundColor:'white',height:100}}
                 />
             <View style={{backgroundColor:this.props.navigation.getParam('Colour_Choosing_string')}}>

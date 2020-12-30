@@ -47,12 +47,7 @@ export default class Offers extends React.Component{
         
         }
             
-            rightElement={<Badge
-            value={item}
-            status="primary"
-            badgeStyle={{width:10,height:10,borderRadius:100}}
-            
-            />}
+         
           
             bottomDivider
             />        )
