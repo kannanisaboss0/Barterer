@@ -167,24 +167,7 @@ export default class InfoScreen extends React.Component{
                 })
             }}
               />
-              <TextInput
-              value={this.state.email}
-              style={{borderColor:"darkgreen",width:"25%",borderWidth:2,height:40,marginTop:25}}
-              onChangeText={(x)=>{
-                window.alert("You cannot change your email!")
-            }}
-              />
               
-              <TextInput 
-              value={this.state.password}
-              secureTextEntry={this.state.passwordNotVisible}
-              style={{borderColor:"darkgreen",width:"25%",borderWidth:2,height:40,marginTop:25}}
-              onChangeText={(x)=>{
-                this.setState({
-                    password:x
-                })
-            }}
-              />
               <TouchableOpacity onPress={()=>{
                   var AskPassword=this.props.navigation.getParam('Password_Verification_boolean')
                   if(AskPassword===true){

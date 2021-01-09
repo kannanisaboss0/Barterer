@@ -2,15 +2,15 @@ import React from 'react';
 import { StyleSheet, Text, View,TextInput,TouchableOpacity,FlatList,Modal,ScrollView,Image,Dimensions,Animated } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker'
 import {ListItem,Card,} from 'react-native-elements'
-import {SwipeListView} from 'react-native-swipe-list-view'
+import {SwipeListView,SwipeRow} from 'react-native-swipe-list-view'
 //import *as Progress from 'react-native-progress'
 import db from '../config.js'
 import firebase from 'firebase'
 
 
 export default class Notifications extends React.Component{
-    constructor(props){
-        super(props);
+    constructor(){
+        super();
         this.state={
             AllNotifications:[],
             email:firebase.auth().currentUser.email,
@@ -24,33 +24,43 @@ export default class Notifications extends React.Component{
             readDocumentId:'fd',
             notid:'vv',
             friendStatus:'',
+            item:'',
+            yourid:''
        
 
         }
         this.requestNotifications=null
     }
-   
+    getUserId=()=>{
+        db.collection("users").where("emailID","==",this.state.email).get().then((document)=>{
+            document.docs.forEach((id)=>{
+            var id=id.data()
+            this.setState({
+                yourid:id.ID
+            })
+            })
+        })
+    }
     getAllNotifications=()=>{
-        db.collection("Notifications").where("ExchangeEmail","==",this.state.email).where("status","==","unread").onSnapshot((snapshot)=>{
+        db.collection("Notifications").where("ExchangeEmail","==",this.state.email).where("status","==","unread").get().then((snapshot)=>{
             var AllNotifications=snapshot.docs.map((document)=>
                 document.data()
-                
             )
             this.setState({
-                AllNotifications:AllNotifications,
-               
-
-
+                AllNotifications:AllNotifications
             })
+        })
+    
             db.collection("Notifications").where("ExchangeEmail","==",this.state.email).get().then((snapshot)=>{
                 snapshot.docs.forEach((document)=>{
                     var data=document.data()
                     this.setState({
-                        RequesterEmail:data.RequesterEmail
+                        RequesterEmail:data.RequesterEmail,
+                        item:data.item
                     })
                 })
             })
-        })
+        
         db.collection("requests").where("email","==",this.state.RequesterEmail).get().then((snapshot)=>{
             snapshot.docs.forEach((document)=>{
                 this.setState({
@@ -60,8 +70,10 @@ export default class Notifications extends React.Component{
         })
     }
     componentDidMount(){
-        this.requestNotifications=this.getAllNotifications()
+    this.requestNotifications=this.getAllNotifications()
+    this.getUserId()
     }
+    
     
     renderItem=({item,i})=>{
         (
@@ -95,7 +107,8 @@ export default class Notifications extends React.Component{
                     "RequesterEmail":item.RequesterEmail,
                     "ExchangerEmail":firebase.auth().currentUser.email,
                     "Declined":this.state.choice,
-                    "Statement":this.state.statement
+                    "Statement":this.state.statement,
+                    "Item":this.state.item
                 })
                 this.setState({
                     cardVisible:true
@@ -146,11 +159,11 @@ export default class Notifications extends React.Component{
     }
     renderHiddenItem=({item,i})=>{
         return(
-            <Animated.View style={{alignSelf:"center",width:500}}>
+            <Animated.View key={i} style={{alignSelf:"center",width:500}}>
                
                 
-                <TouchableOpacity onPress={()=>{
-                    db.collection("Friends").doc(item.RequesterEmail).set({
+                <TouchableOpacity key={i} onPress={()=>{
+                    db.collection("Friends").doc(item.RequesterEmail+this.state.yourid).set({
                         "FriendsEmail":item.RequesterEmail,
                         "YourEmail":this.state.email,
                         
@@ -182,26 +195,21 @@ export default class Notifications extends React.Component{
                     </View>
                 ):
                 <View>
-                   
-                <SwipeListView
-                
-                
+             <SwipeListView
+             friction={2.5}
+             onSwipeValueChange={this.renderItem}
+              disableRightSwipe
+              data={this.state.AllNotifications}
+              renderItem={this.renderItem}
+           
+              rightOpenValue={-Dimensions.get('window').width}
+          
             
-                disableRightSwipe={true}
-                friction={2}
-               
-                
-                  
-                leftOpenValue={-1*Dimensions.get("window").width}
-                rightOpenValue={Dimensions.get("window").width-100}
-                data={this.state.AllNotifications}
-                renderHiddenItem={this.renderHiddenItem}
-                
-                renderItem={this.renderItem}
-                keyExtractor={(item,index)=>{
-                    index.toString()
-                }}
-                ></SwipeListView>
+              keyExtractor={(item,index)=>{
+                  index.toString()
+              }}
+              
+          ></SwipeListView>
                  {this.state.cardVisible===true?
                     (<View style={{position:"absolute",alignSelf:"center",width:1000,marginTop:200}}>
                        

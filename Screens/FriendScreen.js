@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View,TextInput,TouchableOpacity,FlatList,Modal,ScrollView,Image } from 'react-native';
-import {ListItem,Card} from 'react-native-elements'
+import { StyleSheet, Text, View,TextInput,TouchableOpacity,FlatList,Modal,ScrollView,Image,Dimensions } from 'react-native';
+import {ListItem,Card,Avatar} from 'react-native-elements'
 //import *as Progress from 'react-native-progress'
 import db from '../config.js'
 import firebase from 'firebase'
@@ -11,10 +11,24 @@ export default class FriendScreen extends React.Component{
         this.state={
             email:firebase.auth().currentUser.email,
             AllFriends:[],
-            friendsName:''
+            friendsName:'',
+            image:'',
+            cardVisible:true,
+            id:''
 
         }
         this.requestFriends=null
+    }
+    getUserId=()=>{
+        db.collection('users').where("emailID","==",this.state.email).get().then((snapshot)=>{
+            var UserId=snapshot.forEach((doc)=>{
+                var data=doc.data();
+                this.setState({
+                    id:data.ID,
+                    
+                })
+            })
+        })
     }
     getAllFriends=()=>{
         db.collection('Friends').where("YourEmail","==",this.state.email).onSnapshot((snapshot)=>{
@@ -56,12 +70,22 @@ export default class FriendScreen extends React.Component{
     renderItem=({item,i})=>{
       
         return(
-            <View>
-                
+        <View>                
                
             <ListItem
             style={{marginTop:10}}
             title={item.FriendsEmail}
+            rightElement={
+                <TouchableOpacity onPress={()=>{
+                    db.collection("Friends").doc(item.FriendsEmail+this.state.id).delete().then(()=>{
+                        window.alert("Removed "+item.FriendsEmail)
+                    })
+                }} style={{borderWidth:1,borderColor:"darkgreen"}}>
+                    <Text style={{color:"darkgreen"}}>Remove</Text>
+                </TouchableOpacity>
+            }
+         
+           
             
                     
             key={i}
@@ -72,14 +96,16 @@ export default class FriendScreen extends React.Component{
     }
     componentDidMount(){
       this.requestFriends=this.getAllFriends()
+      this.getUserId()
+     
     }
     componentWillUnmount(){
         this.requestFriends=null
     }
     render(){
         return(
-            <View>
-                {this.state.AllFriends==null?
+            <ScrollView style={{height:200}}>
+                {this.state.AllFriends.length===0?
                 (
                     <View>
                     <Image
@@ -87,7 +113,10 @@ export default class FriendScreen extends React.Component{
                     source={require('../assets/Nothing.PNG')}
                     />
                     <Text style={{color:"grey",alignSelf:"center",fontSize:32}}>You currently have no Friends :(</Text>
-                    </View>):(
+                    <Text onPress={()=>{this.props.navigation.toggleDrawer()}} style={{color:"grey",alignSelf:"center"}}>You can add friends by searching their name in the search bar provided in the side menu. Click to open side menu </Text>
+                    </View>)
+                    :
+                    (
                         <View>
                  <TextInput
                 style={{justifyContent:"center",alignSelf:"center",color:"darkgreen",borderWidth:1,borderColor:"darkgreen",height:30,marginLeft:"-83%",borderRadius:25}}
@@ -113,7 +142,7 @@ export default class FriendScreen extends React.Component{
                     
                 </FlatList>
                 </View>)}
-            </View>
+            </ScrollView>
         )
     }
 }

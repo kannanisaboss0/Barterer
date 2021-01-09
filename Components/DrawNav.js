@@ -1,7 +1,9 @@
 import {DrawerItems,} from 'react-navigation-drawer'
-import {Badge, ListItem} from 'react-native-elements'
+import {Badge, ListItem,Avatar} from 'react-native-elements'
 import {TouchableOpacity,View,Text,Image,TextInput,FlatList,ScrollView,} from 'react-native'
 import DropDownPicker from 'react-native-dropdown-picker'
+import *as ImagePicker from 'expo-image-picker'
+
 
 import firebase from 'firebase'
 import db from '../config.js'
@@ -17,7 +19,9 @@ export default class SideBarComponent extends React.Component{
          id:'',
          search:'' ,
          userholder:[],
-         type:'Account'
+         type:'Account',
+         AvatarImage:'',
+         userFullname:''
         }
         this.request=null
     }
@@ -26,7 +30,8 @@ export default class SideBarComponent extends React.Component{
             var UserId=snapshot.forEach((doc)=>{
                 var data=doc.data();
                 this.setState({
-                    id:data.ID
+                    id:data.ID,
+                    userFullname:data.Fullname
                 })
             })
         })
@@ -64,6 +69,7 @@ export default class SideBarComponent extends React.Component{
         })
     })
    }
+  
    getUsers=()=>{
     this.request=db.collection('users').limit(10).onSnapshot((snapshot)=>{
         var Users=snapshot.docs.map((document)=>
@@ -75,6 +81,49 @@ export default class SideBarComponent extends React.Component{
         })
     })
    }
+   openImageLibrary=async()=>{
+       const {canceled,uri}= await ImagePicker.launchImageLibraryAsync({
+           mediaTypes:ImagePicker.MediaTypeOptions.All,
+           aspect:[4,3],
+           allowsEditing:true,
+           quality:1
+       })
+       if(!canceled){
+           this.uploadSelectionToFirebaseStorage(uri,this.state.h)
+       }
+    }
+
+   uploadSelectionToFirebaseStorage=async(URL,ImageSelector)=>{
+    var UnBlobbedImage=  await fetch (URL)
+    var BlobbedImage=await UnBlobbedImage.blob()
+    try{
+        var UploadedImage=firebase.storage().ref().child("User_Profile_Pictures/"+ImageSelector).put(BlobbedImage).then(()=>{
+            this.fetchSelectedImageFromFirebaseStorage(ImageSelector)
+        })
+    }
+    catch(error){
+        window.alert(error.code)
+    }
+    db.collection("UserImages").doc(this.state.h).set({
+        "Email":this.state.h,
+        "Image":this.state.AvatarImage
+    })
+  
+   }    
+   fetchSelectedImageFromFirebaseStorage=async(UserImageSelector)=>{
+       try{
+        var RecievedURL=firebase.storage().ref().child("User_Profile_Pictures/"+UserImageSelector).getDownloadURL().then((DownloadedURL)=>{
+            this.setState({
+                AvatarImage:DownloadedURL
+            })
+        })
+       }
+       catch(error){
+           window.alert(error.code)
+       }
+    
+   }
+   
    renderItem=({item,i})=>{
        return(
            <ListItem
@@ -86,7 +135,7 @@ export default class SideBarComponent extends React.Component{
            rightTitleStyle={{color:"black"}}
            leftAvatar={
                <TouchableOpacity onPress={()=>{
-                db.collection("Friends").doc(item.emailID).set({
+                db.collection("Friends").doc(item.emailID+this.state.id).set({
                     "FriendsEmail":item.emailID,
                     "YourEmail":this.state.h,
                 })
@@ -105,6 +154,11 @@ export default class SideBarComponent extends React.Component{
    }
   componentDidMount(){
       this.getUserId()
+      firebase.storage().ref().child('User_Profile_Pictures/'+this.state.h).getDownloadURL().then((UploadedImage)=>{
+        this.setState({
+            AvatarImage:UploadedImage
+        })
+      })
   }
     
     render(){
@@ -117,6 +171,38 @@ export default class SideBarComponent extends React.Component{
                 <Text>Id:{this.state.id}</Text>
             </View>   
                 <View>
+                    <Badge
+                    
+                     onPress={()=>{
+                        this.openImageLibrary()
+                       
+                    }}
+                    status="error"
+                    value="Change profile picture"
+                    
+                    />
+                    <Avatar
+                    title="Profile picture"
+                    avatarStyle={{width:200,height:200,borderWidth:2,borderColor:"darkgreen",alignSelf:"center",borderRadius:100}}
+                    activeOpacity={0.5}
+                    containerStyle={{width:200,height:200,alignSelf:"center"}}
+                    source={{uri:this.state.AvatarImage}}
+                  
+                    
+                    rounded
+        
+                    size={'medium'}
+                    />
+                    <Badge
+                    
+                    onPress={()=>{
+                       this.props.navigation.navigate('Settings')
+                      
+                   }}
+                   status="error"
+                   value="Change name"
+                   />
+                    <Text style={{fontWeight:"bold",color:"darkgreen",alignSelf:"center",fontSize:30}}> {this.state.userFullname}</Text>
                 
             <DrawerItems {...this.props}
             

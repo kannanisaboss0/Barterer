@@ -1,5 +1,5 @@
 import React from 'react';
-import {  Text, View,TextInput,TouchableOpacity,Alert,Image,Modal,ScrollView, } from 'react-native';
+import {  Text, View,TextInput,TouchableOpacity,Alert,Image,Modal,ScrollView,Dimensions } from 'react-native';
 import {CheckBox,} from 'react-native-elements'
 import DropDownPicker from 'react-native-dropdown-picker'
 import db from '../config'
@@ -19,23 +19,7 @@ export default class GeneralScreen extends React.Component{
     render(){
         return(
             <View style={{backgroundColor:this.state.appColor}}>
-                <CheckBox
-                onPress={()=>{
-                    this.setState({
-                        askforPasswordVerification:false
-                    })
-                    if(this.state.askforPasswordVerification===false){
-                        this.setState({
-                            askforPasswordVerification:true
-                        })
-                    }
-                }}
-                checked={this.state.askforPasswordVerification}
-               
-             
-                checkedColor="darkgreen"
-                title="Ask for password verififcation, while updating email"
-                />
+                
 
              
                 <View>
@@ -50,7 +34,7 @@ export default class GeneralScreen extends React.Component{
                         {label:"White(Default)",value:"white"}
                     ]
                 }
-                style={{width:"25%"}}
+                style={{width:"25%",alignSelf:"center"}}
                 itemStyle={{width:"25%",}}
                 activeItemStyle={{backgroundColor:"darkgreen",}}
                 placeholder="Background color[default white]"
@@ -67,7 +51,7 @@ export default class GeneralScreen extends React.Component{
                     this.props.navigation.navigate('User',{'Password_Verification_boolean':this.state.askforPasswordVerification,'Colour_Choosing_string':this.state.appColor})
                     this.props.navigation.navigate('Exchange',{'Password_Verification_boolean':this.state.askforPasswordVerification,'Colour_Choosing_string':this.state.appColor})
                     this.props.navigation.navigate('Home',{'Password_Verification_boolean':this.state.askforPasswordVerification,'Colour_Choosing_string':this.state.appColor})
-                }}  style={{marginTop:215,borderWidth:1,borderColor:"darkgreen",width:"37.5%",height:55,backgroundColor:"darkgreen",marginLeft:-75,justifyContent:"space-evenly",alignItems:"center"}}>
+                }}  style={{marginTop:215,borderWidth:1,borderColor:"darkgreen",width:"37.5%",height:55,backgroundColor:"darkgreen",justifyContent:"space-evenly",alignItems:"center",alignSelf:"center"}}>
                     <Text style={{fontSize:32,color:"white",justifyContent:"space-around",alignSelf:"center"}}>Save Changes</Text>
                 </TouchableOpacity>
         </View>)

@@ -50,7 +50,7 @@ export default class App extends React.Component {
  
 const SettingsTabNavigator=createMaterialTopTabNavigator({
   User:{screen:InfoScreen,navigationOptions:{tabBarLabel:'User Settings'}},
-  GeneralSet:{screen:GeneralScreen,navigationOptions:{tabBarLabel:'General Settings',}}
+  GeneralSet:{screen:GeneralScreen,navigationOptions:{tabBarLabel:'General Settings',tabBarIcon:<Image  style={{width:20,height:20}} source={require('./assets/Settings.PNG')}/>}}
 
 },{
  

@@ -46,6 +46,23 @@ export default class Offers extends React.Component{
         <Text style={{fontWeight:"bold",color:"darkgreen"}}>No Statement</Text>
         
         }
+        rightElement={
+            item.Item!=="Declined"?
+      (<View>
+          <TouchableOpacity onPress={()=>{
+              db.collection("RecievedItems").add({
+                  
+              })
+          }}>
+          <Text>
+            I have received the item
+          </Text>
+          </TouchableOpacity>
+      </View>)
+           
+            :
+            null
+        }
             
          
           
@@ -62,7 +79,7 @@ export default class Offers extends React.Component{
                     style={{alignSelf:"center",height:200,width:200}}
                     source={require('../assets/Nothing.PNG')}
                     />
-                    <Text style={{color:"grey",alignSelf:"center",fontSize:32}}>No New Notifications</Text>
+                    <Text style={{color:"grey",alignSelf:"center",fontSize:32}}>No New Offers</Text>
                     </View>
                 ):
                 <FlatList

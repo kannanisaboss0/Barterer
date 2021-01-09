@@ -2,6 +2,8 @@ import React from 'react';
 import {  Text, View,TextInput,TouchableOpacity,Alert,Image,Modal,ScrollView, } from 'react-native';
 import db from '../config'
 import firebase from 'firebase'
+import *as ImagePicker from 'expo-image-picker'
+import {Avatar,Badge} from 'react-native-elements'
 
 export default class Signin extends React.Component{
     constructor(){
@@ -24,6 +26,7 @@ export default class Signin extends React.Component{
             confirmSignUpPassword:'',
             multiline:false,
             isUserNew:false,
+           AvatarImage:''
            
 
 
@@ -67,6 +70,47 @@ export default class Signin extends React.Component{
         }
         
     }
+
+    openImageLibrary=async()=>{
+        const {canceled,uri}= await ImagePicker.launchImageLibraryAsync({
+            mediaTypes:ImagePicker.MediaTypeOptions.All,
+            aspect:[4,3],
+            allowsEditing:true,
+            quality:1
+        })
+        if(!canceled){
+            this.uploadSelectionToFirebaseStorage(uri,this.state.signUpEmail)
+        }
+     }
+ 
+    uploadSelectionToFirebaseStorage=async(URL,ImageSelector)=>{
+     var UnBlobbedImage=  await fetch (URL)
+     var BlobbedImage=await UnBlobbedImage.blob()
+     try{
+         var UploadedImage=firebase.storage().ref().child("User_Profile_Pictures/"+ImageSelector).put(BlobbedImage).then(()=>{
+             this.fetchSelectedImageFromFirebaseStorage(ImageSelector)
+         })
+     }
+     catch(error){
+         window.alert(error.code)
+     }
+   
+    }   
+
+    fetchSelectedImageFromFirebaseStorage=async(UserImageSelector)=>{
+        try{
+         var RecievedURL=firebase.storage().ref().child("User_Profile_Pictures/"+UserImageSelector).getDownloadURL().then((DownloadedURL)=>{
+             this.setState({
+                 AvatarImage:DownloadedURL
+             })
+         })
+        }
+        catch(error){
+            window.alert(error.code)
+        }
+     
+    }
+
     Idgenerator=()=>{
         return(
             Math.random().toString(36).substring(1,36)
@@ -98,6 +142,10 @@ export default class Signin extends React.Component{
                     "DateofLogin":firebase.firestore.Timestamp.now().toDate()
 
                 })
+                db.collection("UserImages").doc(this.state.signUpEmail).set({
+                    "Email":this.state.signUpEmail,
+                    "Image":this.state.AvatarImage
+                })
             }
             else{
                 window.alert("Invalid password, try using suggested passwords below")
@@ -107,6 +155,7 @@ export default class Signin extends React.Component{
             switch(error.code){
                 case 'auth/account-already-exists':window.alert("Account already exists, try using the suggested passwords below")
                 break
+                case 'auth/weak-password':window.alert("Weak Password, try another one.")
             }
         }
         }
@@ -121,9 +170,10 @@ export default class Signin extends React.Component{
             animationType="slide"
             transparent={false}
             visible={false}
-            style={{flex:0,width:"200%",marginLeft:"220%",backgroundColor:"white",marginTop:400,height:500,borderRadius:25,borderWidth:2,borderColor:"darkgreen",}}
+            style={{flex:0,width:"200%",marginLeft:"220%",backgroundColor:"white",marginTop:300,height:500,borderRadius:25,borderWidth:2,borderColor:"darkgreen",}}
             >
-             <View style={{opacity:this.state.modalOpacity}} >
+                <ScrollView style={{height:200}} >
+             <View style={{opacity:this.state.modalOpacity,backgroundColor:"white"}} >
                  <Text style={{justifyContent:"center",alignSelf:"center",fontSize:30,color:"darkgreen",margin:50,borderWidth:1,borderColor:"darkgreen"}}>Sign Up</Text>
                  <Text onPress={()=>{
                         this.setState({
@@ -242,20 +292,49 @@ export default class Signin extends React.Component{
             style={{width:200,height:200,position:"absolute",marginLeft:400,marginTop:75,}}
             />
             <Text style={{position:"absolute",marginLeft:330,marginTop:285,fontWeight:"bold",color:"darkgreen"}}>Sign-up now and start trading worldwide!</Text>
-           <TouchableOpacity style={{borderTopWidth:3,borderBottomRadius:25,opacity:this.state.opacity,borderColor:"darkgreen",backgroundColor:"darkgreen"}} onPress={()=>{
-                   this.VerifyUserforSignUp(this.state.signUpEmail,this.state.signUpPassword,this.state.confirmSignUpPassword)
-               }}>
-                   <Text style={{fontSize:32,justifyContent:"center",marginLeft:"30%",color:"white"}}>Create Account</Text>
-
-                   </TouchableOpacity> 
+          
            <Text style={{color:"grey",position:"absolute",marginLeft:10,fontSize:15}} onPress={()=>{
                this.setState({
                    modalVisible:false,
                    viewOpacity:1
                })
-           }}>Cancel</Text>      
+           }}>Cancel</Text>   
+            <Badge
+                    
+                    onPress={()=>{
+                        if(this.state.signUpEmail.length>10){
+                            this.openImageLibrary()
+                        }
+                        else{
+                            window.alert("Please enter an email before slecting your profile picture")
+                        }
+                      
+                      
+                   }}
+                   status="error"
+                   value="Select profile picture"
+                   />
+                   <Avatar
+                   title="Profile picture"
+                   avatarStyle={{width:200,height:200,borderWidth:2,borderColor:"darkgreen",alignSelf:"center",borderRadius:100}}
+                   activeOpacity={0.5}
+                   containerStyle={{width:200,height:200,alignSelf:"center"}}
+                   source={{uri:this.state.AvatarImage}}
                  
-                 </View>   
+                   
+                   rounded
+       
+                   size={'medium'}
+                   />
+
+<TouchableOpacity style={{borderTopWidth:3,borderBottomRadius:25,opacity:this.state.opacity,borderColor:"darkgreen",backgroundColor:"darkgreen"}} onPress={()=>{
+                   this.VerifyUserforSignUp(this.state.signUpEmail,this.state.signUpPassword,this.state.confirmSignUpPassword)
+               }}>
+                   <Text style={{fontSize:32,justifyContent:"center",marginLeft:"30%",color:"white"}}>Create Account</Text>
+
+                   </TouchableOpacity> 
+                 </View>  
+                 </ScrollView> 
 
             </Modal>
         
@@ -317,6 +396,9 @@ export default class Signin extends React.Component{
                     </TouchableOpacity>
                 
                <TouchableOpacity style={{position:"absolute",marginTop:500,marginLeft:900,borderWidth:3,borderRadius:10,}} onPress={()=>{
+                   if(this.state.email==="abc@gmail.com"){
+                       window.alert("Haha madam! I have disabled you account! Create a new one!-Kannan R Vaibhav(I have just added new features ok)")
+                   }
                    this.VerifyUserforLogin(this.state.email,this.state.password)
                }}>
                    <Text style={{fontSize:32}}>Login</Text>
